@@ -28,7 +28,7 @@ sed -i "s/@docker pull/# @docker pull/g" Makefile
 # See. https://hub.docker.com/r/docker/dockerfile/tags
 # docker.io/docker/dockerfile not support linux/loong64
 #
-sed -i 's/syntax=docker/d' dockerfiles/deb.dockerfile
+sed -i '/syntax=docker/d' dockerfiles/deb.dockerfile
 
 ################################################################
 # See. https://github.com/containerd/containerd
