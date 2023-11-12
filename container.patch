@@ -1,0 +1,42 @@
+diff --git a/scripts/checkout.sh b/scripts/checkout.sh
+index e53a9e4..c96811b 100755
+--- a/scripts/checkout.sh
++++ b/scripts/checkout.sh
+@@ -29,6 +29,37 @@ checkout() (
+ 	fi
+ 	git -C "$SRC" fetch --update-head-ok --depth 1 origin "$REF_FETCH"
+ 	git -C "$SRC" checkout -q "$REF"
++	case "$SRC" in
++		"src/github.com/opencontainers/runc")
++			if [ -f "$SRC/libcontainer/system/syscall_linux_64.go" ]; then
++				if ! grep -q "s390x || loong64" "$SRC/libcontainer/system/syscall_linux_64.go"; then
++					sed -i "s@|| s390x@|| s390x || loong64@g" "$SRC/libcontainer/system/syscall_linux_64.go"
++				fi
++			fi
++			if [ -f "$SRC/libcontainer/system/syscall_linux_64.go" ]; then
++				if ! grep -q "s390x loong64" "$SRC/libcontainer/system/syscall_linux_64.go"; then
++					sed -i "riscv64 s390x@riscv64 s390x loong64@g" "$SRC/libcontainer/system/syscall_linux_64.go"
++				fi
++			fi
++			sed -i "s@--dirty @@g" "$SRC/Makefile"
++			;;
++		"src/github.com/containerd/containerd")
++			if [ -f "$SRC/vendor/github.com/cilium/ebpf/internal/endian_le.go" ]; then
++				if ! grep -q "riscv64 || loong64" "$SRC/vendor/github.com/cilium/ebpf/internal/endian_le.go"; then
++					sed -i "s@|| riscv64@|| riscv64 || loong64@g" "$SRC/vendor/github.com/cilium/ebpf/internal/endian_le.go"
++				fi
++			fi
++			if [ -f "$SRC/vendor/github.com/cilium/ebpf/internal/endian_le.go" ]; then
++				if ! grep -q "riscv64 loong64" "$SRC/vendor/github.com/cilium/ebpf/internal/endian_le.go"; then
++					sed -i "s@ppc64le riscv64@ppc64le riscv64 loong64@g" "$SRC/vendor/github.com/cilium/ebpf/internal/endian_le.go"
++				fi
++			fi
++			sed -i "s@--dirty='.m' @@g" "$SRC/Makefile"
++			sed -i 's@$(shell if ! git diff --no-ext-diff --quiet --exit-code; then echo .m; fi)@@g' "$SRC/Makefile"
++			;;
++		*) echo "None";
++			;;
++	esac
+ )
+ 
+ 
