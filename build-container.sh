@@ -8,7 +8,7 @@ CONTAINER_VERSION=v1.6.24
 # GO_IMAGE: golang:1.20-buster
 #
 REF=${CONTAINER_VERSION}
-GO_VERSION=$(curl -sSL https://github.com/containerd/containerd/raw/v1.7.8/contrib/Dockerfile.test | grep "ARG GOLANG_VERSION" | awk -F "=" '{print $2}' | cut -d. -f1,2)
+GO_VERSION=$(curl -sSL https://github.com/containerd/containerd/raw/${CONTAINER_VERSION}/contrib/Dockerfile.test | grep "ARG GOLANG_VERSION" | awk -F "=" '{print $2}' | cut -d. -f1,2)
 GO_IMAGE=golang:${GO_VERSION}-buster
 
 TMPDIR=$(mktemp -d)
